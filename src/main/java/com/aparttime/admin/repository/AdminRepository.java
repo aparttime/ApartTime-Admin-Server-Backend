@@ -1,5 +1,10 @@
 package com.aparttime.admin.repository;
 
-public interface AdminRepository {
+import com.aparttime.admin.Admin;
+import java.util.Optional;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface AdminRepository extends JpaRepository<Admin, Long> {
+
 
 }
