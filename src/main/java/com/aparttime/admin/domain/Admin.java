@@ -1,4 +1,4 @@
-package com.aparttime.admin;
+package com.aparttime.admin.domain;
 
 import com.aparttime.common.BaseEntity;
 import jakarta.persistence.Column;
