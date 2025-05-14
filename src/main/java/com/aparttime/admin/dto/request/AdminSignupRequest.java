@@ -1,4 +1,8 @@
 package com.aparttime.admin.dto.request;
 
-public record AdminSignupRequest() {
+public record AdminSignupRequest(
+    String username,
+    String password
+) {
+
 }
