@@ -18,25 +18,25 @@ public class SecurityConfig {
         http
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
+                    "/css/**",
+                    "/js/**",
                     "/admin/signup",
-                    "/admin/login",
-                    "/admin/css/**",
-                    "/admin/js/**"
+                    "/auth/login"
                 ).permitAll()
                 .requestMatchers("/admin/**").authenticated()
             )
             .formLogin(form -> form
-                .loginPage("/admin/login")
-                .loginProcessingUrl("/admin/login-process")
+                .loginPage("/auth/login")
+                .loginProcessingUrl("/auth/login-process")
                 .usernameParameter("username")
                 .passwordParameter("password")
-                .defaultSuccessUrl("/admin/dashboard", true)
-                .failureUrl("/admin/login?error=true")
+                .defaultSuccessUrl("/dashboard", true)
+                .failureUrl("/auth/login?error=true")
                 .permitAll()
             )
             .logout(logout -> logout
-                .logoutUrl("/admin/logout")
-                .logoutSuccessUrl("/admin/login?logout=true")
+                .logoutUrl("/auth/logout")
+                .logoutSuccessUrl("/auth/login?logout=true")
                 .invalidateHttpSession(true)
                 .deleteCookies("JSESSIONID")
             );
