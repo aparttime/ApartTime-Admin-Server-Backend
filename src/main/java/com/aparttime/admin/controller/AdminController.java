@@ -30,7 +30,7 @@ public class AdminController {
         @ModelAttribute AdminSignupRequest adminSignupRequest
     ) {
         adminService.signup(adminSignupRequest);
-        return "redirect:/admin/login";
+        return "redirect:/auth/login";
     }
 
 }
