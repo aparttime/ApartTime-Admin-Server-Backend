@@ -1,9 +1,13 @@
 package com.aparttime.auth.controller;
 
+import com.aparttime.auth.dto.request.SignupRequest;
+import com.aparttime.auth.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -11,6 +15,24 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequiredArgsConstructor
 @RequestMapping("/auth")
 public class AuthController {
+
+    private final AuthService authService;
+
+    @GetMapping("/signup")
+    public String showSignupForm(
+        Model model
+    ) {
+        model.addAttribute("signupRequest", new SignupRequest());
+        return "auth/signup";
+    }
+
+    @PostMapping("/signup")
+    public String processSignup(
+        @ModelAttribute SignupRequest signupRequest
+    ) {
+        authService.signup(signupRequest);
+        return "redirect:/auth/login";
+    }
 
     @GetMapping("/login")
     public String showLoginPage(
