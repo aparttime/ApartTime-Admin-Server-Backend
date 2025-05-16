@@ -1,4 +1,4 @@
-package com.aparttime.admin.dto.request;
+package com.aparttime.auth.dto.request;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
