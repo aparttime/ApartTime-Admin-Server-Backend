@@ -30,12 +30,22 @@ public class Admin extends BaseEntity {
     @Column(nullable = false, length = 20)
     private String role;
 
-    public Admin(
+    private Admin(
         String username,
         String password
     ) {
         this.username = username;
         this.password = password;
         this.role = "ADMIN"; // 나중에 상수로 바꿔주기
+    }
+
+    public static Admin of(
+        String username,
+        String password
+    ) {
+        return new Admin(
+            username,
+            password
+        );
     }
 }
