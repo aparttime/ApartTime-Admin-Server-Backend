@@ -20,10 +20,12 @@ public class SecurityConfig {
                 .requestMatchers(
                     "/css/**",
                     "/js/**",
-                    "/admin/signup",
-                    "/auth/login"
+                    "/images/**"
                 ).permitAll()
-                .requestMatchers("/admin/**").authenticated()
+                .requestMatchers(
+                    "/auth/**"
+                ).permitAll()
+                .anyRequest().authenticated()
             )
             .formLogin(form -> form
                 .loginPage("/auth/login")
