@@ -32,7 +32,7 @@ public class SecurityConfig {
                 .loginProcessingUrl("/auth/login-process")
                 .usernameParameter("username")
                 .passwordParameter("password")
-                .defaultSuccessUrl("/dashboard", true)
+                .defaultSuccessUrl("/admin/dashboard", true)
                 .failureUrl("/auth/login?error=true")
                 .permitAll()
             )
@@ -41,7 +41,13 @@ public class SecurityConfig {
                 .logoutSuccessUrl("/auth/login?logout=true")
                 .invalidateHttpSession(true)
                 .deleteCookies("JSESSIONID")
-            );
+            )
+            .exceptionHandling(exception -> exception
+                .authenticationEntryPoint(
+                    (request, response, authException) -> response.sendRedirect("/auth/login")
+                )
+            )
+        ;
 
         return http.build();
 
