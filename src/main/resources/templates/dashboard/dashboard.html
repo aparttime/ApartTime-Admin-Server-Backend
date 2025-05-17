@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>관리자 대시보드</title>
+  <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+</head>
+<body>
+<div class="dashboard-container">
+  <header class="dashboard-header">
+    <h1>관리자 대시보드</h1>
+    <form th:action="@{/auth/logout}" method="post">
+      <button type="submit">로그아웃</button>
+    </form>
+  </header>
+
+  <!-- 알림 표시 영역 -->
+  <div id="alert-area" style="margin: 1rem 0;"></div>
+
+  <main class="dashboard-content">
+    <section class="dashboard-card">
+      <h2>
+        회원가입 요청
+        <span id="signup-badge"
+              style="display:none; background:red; color:white; border-radius:50%; padding:2px 8px; margin-left:6px; font-size:0.8rem;">0</span>
+      </h2>
+      <p>새로운 사용자 가입 요청을 확인하고 승인하거나 거절할 수 있습니다.</p>
+      <a href="/admin/users/pending" class="button">가입 요청 보기</a>
+    </section>
+
+    <section class="dashboard-card">
+      <h2>시스템 모니터링</h2>
+      <p>서버 자원 사용률을 확인합니다.</p>
+      <a href="/admin/system/status" class="button">모니터링 보기</a>
+    </section>
+
+    <section class="dashboard-card">
+      <h2>채팅 내역</h2>
+      <p>사용자 간의 채팅방 및 기록을 조회합니다.</p>
+      <a href="/admin/chats" class="button">채팅 기록 보기</a>
+    </section>
+  </main>
+</div>
+
+<!-- SSE 알림 스크립트 -->
+<script>
+  const sse = new EventSource("/sse/notification");
+  let signupAlertCount = 0;
+
+  sse.addEventListener("member-signup", function (e) {
+    // 알림 메시지 교체
+    const alertArea = document.getElementById("alert-area");
+    alertArea.innerHTML = ""; // 기존 알림 제거
+
+    const alertBox = document.createElement("div");
+    alertBox.textContent = "🔔 가입 요청: " + e.data;
+    alertBox.style = "background: #fff3cd; padding: 10px; margin-bottom: 10px; border: 1px solid #ffeeba; border-radius: 4px;";
+    alertArea.appendChild(alertBox);
+
+    // 알림 배지 업데이트
+    signupAlertCount++;
+    const badge = document.getElementById("signup-badge");
+    badge.textContent = signupAlertCount;
+    badge.style.display = "inline-block";
+  });
+
+  sse.onerror = function () {
+    console.warn("SSE 연결이 끊어졌습니다.");
+  };
+</script>
+
+</body>
+</html>

@@ -1,0 +1,15 @@
+<body>
+<div class="form-container">
+  <h2>아파트타임 관리자 등록</h2>
+  <link rel="stylesheet" th:href="@{/css/signup.css}"/>
+  <form th:action="@{/auth/signup}" th:object="${signupRequest}" method="post">
+    <label>ID:
+      <input type="text" th:field="*{username}"/>
+    </label>
+    <label>PW:
+      <input type="password" th:field="*{password}"/>
+    </label>
+    <button type="submit">등록</button>
+  </form>
+</div>
+</body>
