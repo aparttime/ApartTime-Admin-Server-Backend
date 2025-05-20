@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MemberSignupEvent {
 
-    private Long id;
     private String username;
     private String email;
 
