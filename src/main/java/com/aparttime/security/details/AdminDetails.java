@@ -1,4 +1,4 @@
-package com.aparttime.auth.security;
+package com.aparttime.security.details;
 
 import com.aparttime.admin.domain.Admin;
 import java.util.Collection;
