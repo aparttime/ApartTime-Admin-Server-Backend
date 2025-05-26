@@ -1,4 +1,4 @@
-package com.aparttime.common;
+package com.aparttime.common.response;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
