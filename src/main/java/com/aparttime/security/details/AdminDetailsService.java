@@ -1,8 +1,7 @@
-package com.aparttime.auth.service;
+package com.aparttime.security.details;
 
 import com.aparttime.admin.domain.Admin;
 import com.aparttime.admin.repository.AdminRepository;
-import com.aparttime.security.details.AdminDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
