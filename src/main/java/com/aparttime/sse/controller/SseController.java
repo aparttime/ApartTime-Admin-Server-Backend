@@ -9,12 +9,12 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/sse")
+@RequestMapping("/admin")
 public class SseController {
 
     private final SseEmitterService sseEmitterService;
 
-    @GetMapping("/notification")
+    @GetMapping("/sse/notification")
     public SseEmitter subscribe() {
         return sseEmitterService.subscribe();
     }
