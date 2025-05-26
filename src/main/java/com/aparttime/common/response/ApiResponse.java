@@ -1,4 +1,4 @@
-package com.aparttime.common;
+package com.aparttime.common.response;
 
 import org.springframework.http.HttpStatus;
 
