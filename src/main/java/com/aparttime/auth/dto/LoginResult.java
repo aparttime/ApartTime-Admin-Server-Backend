@@ -7,4 +7,14 @@ public record LoginResult(
     String refreshToken
 ) {
 
+    public static LoginResult of(
+        LoginResponse loginResponse,
+        String refreshToken
+    ) {
+        return new LoginResult(
+            loginResponse,
+            refreshToken
+        );
+    }
+
 }
