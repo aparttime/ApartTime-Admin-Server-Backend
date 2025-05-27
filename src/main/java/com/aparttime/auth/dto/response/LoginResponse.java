@@ -6,4 +6,16 @@ public record LoginResponse(
     String accessToken
 ) {
 
+    public static LoginResponse of(
+        Long memberId,
+        String username,
+        String accessToken
+    ) {
+        return new LoginResponse(
+            memberId,
+            username,
+            accessToken
+        );
+    }
+
 }
