@@ -1,60 +1,48 @@
 package com.aparttime.auth.controller;
 
-import com.aparttime.auth.dto.request.SignupRequest;
-import com.aparttime.auth.service.AuthService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import static com.aparttime.common.response.ResponseMessage.*;
 
-@Controller
+import com.aparttime.auth.cookie.AuthCookieManager;
+import com.aparttime.auth.dto.LoginResult;
+import com.aparttime.auth.dto.request.LoginRequest;
+import com.aparttime.auth.dto.response.LoginResponse;
+import com.aparttime.auth.service.AuthService;
+import com.aparttime.common.response.ApiResponse;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
 @RequiredArgsConstructor
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
+
 public class AuthController {
 
     private final AuthService authService;
+    private final AuthCookieManager authCookieManager;
 
-    @GetMapping("/signup")
-    public String showSignupForm(
-        Model model
+    @PostMapping("/login")
+    public ResponseEntity<ApiResponse<LoginResponse>> login(
+        @RequestBody LoginRequest request,
+        HttpServletResponse response
     ) {
-        model.addAttribute("signupRequest", new SignupRequest());
-        return "auth/signup";
-    }
+        LoginResult result = authService.login(request);
 
-    @PostMapping("/signup")
-    public String processSignup(
-        @ModelAttribute SignupRequest signupRequest
-    ) {
-        authService.signup(signupRequest);
-        return "redirect:/auth/login";
-    }
+        authCookieManager.addRefreshToken(
+            response,
+            result.refreshToken()
+        );
 
-    @GetMapping("/login")
-    public String showLoginPage(
-        @RequestParam(value = "error", required = false) String error,
-        @RequestParam(value = "logout", required = false) String logout,
-        Model model
-    ) {
-        if (error != null) {
-            model.addAttribute(
-                "errorMessage",
-                "아이디 또는 비밀번호가 잘못되었습니다."
-            );
-        }
-
-        if (logout != null) {
-            model.addAttribute(
-                "logoutMessage",
-                "성공적으로 로그아웃되었습니다."
-            );
-        }
-
-        return "auth/login";
+        return ResponseEntity.ok(
+            ApiResponse.ok(
+                LOGIN_SUCCESS,
+                result.loginResponse()
+            )
+        );
     }
 
 }
