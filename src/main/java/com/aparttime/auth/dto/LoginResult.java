@@ -1,5 +1,10 @@
 package com.aparttime.auth.dto;
 
-public record LoginResult() {
+import com.aparttime.auth.dto.response.LoginResponse;
+
+public record LoginResult(
+    LoginResponse loginResponse,
+    String refreshToken
+) {
 
 }
