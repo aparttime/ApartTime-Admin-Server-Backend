@@ -6,6 +6,8 @@ import com.aparttime.auth.dto.request.LoginRequest;
 import com.aparttime.auth.dto.request.SignupRequest;
 import com.aparttime.admin.repository.AdminRepository;
 import com.aparttime.auth.dto.response.LoginResponse;
+import com.aparttime.config.properties.JwtProperties;
+import com.aparttime.redis.repository.RefreshTokenRepository;
 import com.aparttime.security.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,6 +20,8 @@ public class AuthService {
     private final AdminRepository adminRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
+    private final JwtProperties jwtProperties;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     public void signup(
         SignupRequest request
@@ -42,6 +46,13 @@ public class AuthService {
 
         String accessToken = jwtTokenProvider.createAccessToken(admin.getUsername());
         String refreshToken = jwtTokenProvider.createRefreshToken(admin.getUsername());
+
+        // save refresh token in Redis
+        refreshTokenRepository.save(
+            admin.getId(),
+            refreshToken,
+            jwtProperties.getRefreshTokenExpiration()
+        );
 
         LoginResponse loginResponse = LoginResponse.of(
             admin.getId(),
