@@ -63,4 +63,10 @@ public class AuthService {
         return LoginResult.of(loginResponse, refreshToken);
     }
 
+    public void logout(
+        Long memberId
+    ) {
+        refreshTokenRepository.delete(memberId);
+    }
+
 }
