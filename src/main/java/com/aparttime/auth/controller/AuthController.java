@@ -8,9 +8,11 @@ import com.aparttime.auth.dto.request.LoginRequest;
 import com.aparttime.auth.dto.response.LoginResponse;
 import com.aparttime.auth.service.AuthService;
 import com.aparttime.common.response.ApiResponse;
+import com.aparttime.security.details.AdminDetails;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,6 +43,23 @@ public class AuthController {
             ApiResponse.ok(
                 LOGIN_SUCCESS,
                 result.loginResponse()
+            )
+        );
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<ApiResponse<Void>> logout(
+        @AuthenticationPrincipal AdminDetails admin,
+        HttpServletResponse response
+    ) {
+        authCookieManager.removeRefreshToken(response);
+
+        authService.logout(admin.getAdmin().getId());
+
+        return ResponseEntity.ok(
+            ApiResponse.ok(
+                LOGOUT_SUCCESS,
+                null
             )
         );
     }
