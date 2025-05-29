@@ -7,6 +7,8 @@ import com.aparttime.auth.dto.request.SignupRequest;
 import com.aparttime.admin.repository.AdminRepository;
 import com.aparttime.auth.dto.response.LoginResponse;
 import com.aparttime.config.properties.JwtProperties;
+import com.aparttime.exception.auth.InvalidPasswordException;
+import com.aparttime.exception.member.MemberNotFoundException;
 import com.aparttime.redis.repository.RefreshTokenRepository;
 import com.aparttime.security.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -38,10 +40,10 @@ public class AuthService {
         LoginRequest request
     ) {
         Admin admin = adminRepository.findByUsername(request.username())
-            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
+            .orElseThrow(MemberNotFoundException::new);
 
         if (!passwordEncoder.matches(request.password(), admin.getPassword())) {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+            throw new InvalidPasswordException();
         }
 
         String accessToken = jwtTokenProvider.createAccessToken(admin.getUsername());
