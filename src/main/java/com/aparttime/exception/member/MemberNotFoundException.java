@@ -1,5 +1,12 @@
 package com.aparttime.exception.member;
 
-public class MemberNotFoundException {
+import static com.aparttime.exception.ErrorCode.*;
 
+import com.aparttime.exception.RestApiException;
+
+public class MemberNotFoundException extends RestApiException {
+
+    public MemberNotFoundException() {
+        super(MEMBER_NOT_FOUND);
+    }
 }
