@@ -1,5 +1,7 @@
 package com.aparttime.security.filter;
 
+import static com.aparttime.common.constants.JwtTokenConstants.*;
+
 import com.aparttime.security.jwt.JwtTokenProvider;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -47,9 +49,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         HttpServletRequest request
     ) {
 
-        String bearerToken = request.getHeader("Authorization");
-        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
-            return bearerToken.substring(7);
+        String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
+        if (bearerToken != null && bearerToken.startsWith(BEARER_PREFIX)) {
+            return bearerToken.substring(BEARER_PREFIX_LENGTH);
         }
 
         return null;
