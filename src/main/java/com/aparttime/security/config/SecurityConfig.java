@@ -1,6 +1,7 @@
 package com.aparttime.security.config;
 
 import com.aparttime.security.filter.JwtAuthenticationFilter;
+import com.aparttime.security.filter.JwtExceptionFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,24 +20,34 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final JwtExceptionFilter jwtExceptionFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
             .csrf(AbstractHttpConfigurer::disable)
+
             .formLogin(AbstractHttpConfigurer::disable)
+
             .httpBasic(AbstractHttpConfigurer::disable)
+
             .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/auth/**").permitAll()
-                .anyRequest().authenticated());
+                .anyRequest().authenticated())
 
-        http.addFilterBefore(
-            jwtAuthenticationFilter,
-            UsernamePasswordAuthenticationFilter.class
-        );
+            .addFilterBefore(
+                jwtAuthenticationFilter,
+                UsernamePasswordAuthenticationFilter.class
+            )
+
+            .addFilterBefore(
+                jwtExceptionFilter,
+                JwtAuthenticationFilter.class
+            );
 
         return http.build();
 
