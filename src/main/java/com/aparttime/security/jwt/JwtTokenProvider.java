@@ -1,10 +1,15 @@
 package com.aparttime.security.jwt;
 
 import com.aparttime.config.properties.JwtProperties;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
+import com.aparttime.exception.jwt.JwtAuthenticationException;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 import jakarta.annotation.PostConstruct;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
@@ -66,8 +71,16 @@ public class JwtTokenProvider {
                 .build()
                 .parseClaimsJws(token);
             return true;
+        } catch (ExpiredJwtException e) {
+            throw JwtAuthenticationException.expired();
+        } catch (SignatureException e) {
+            throw JwtAuthenticationException.invalidSignature();
+        } catch (MalformedJwtException e) {
+            throw JwtAuthenticationException.malformed();
+        } catch (UnsupportedJwtException e) {
+            throw JwtAuthenticationException.unsupported();
         } catch (JwtException | IllegalArgumentException e) {
-            return false;
+            throw JwtAuthenticationException.invalid();
         }
     }
 
