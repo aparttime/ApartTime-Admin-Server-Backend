@@ -1,4 +1,4 @@
-package com.aparttime.security.jwt;
+package com.aparttime.jwt;
 
 import com.aparttime.config.properties.JwtProperties;
 import com.aparttime.exception.jwt.AccessTokenExpiredException;
