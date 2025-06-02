@@ -1,4 +1,4 @@
-package com.aparttime.auth.dto;
+package com.aparttime.auth.dto.result;
 
 import com.aparttime.auth.dto.response.LoginResponse;
 
