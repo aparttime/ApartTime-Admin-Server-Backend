@@ -1,7 +1,7 @@
 package com.aparttime.auth.service;
 
 import com.aparttime.admin.domain.Admin;
-import com.aparttime.auth.dto.LoginResult;
+import com.aparttime.auth.dto.result.LoginResult;
 import com.aparttime.auth.dto.request.LoginRequest;
 import com.aparttime.auth.dto.request.SignupRequest;
 import com.aparttime.admin.repository.AdminRepository;
@@ -10,7 +10,7 @@ import com.aparttime.config.properties.JwtProperties;
 import com.aparttime.exception.auth.InvalidPasswordException;
 import com.aparttime.exception.member.MemberNotFoundException;
 import com.aparttime.redis.repository.RefreshTokenRepository;
-import com.aparttime.security.jwt.JwtTokenProvider;
+import com.aparttime.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
