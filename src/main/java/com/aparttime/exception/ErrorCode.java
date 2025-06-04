@@ -18,9 +18,10 @@ public enum ErrorCode {
 
     // jwt
     ACCESS_TOKEN_EXPIRED(UNAUTHORIZED, "Access Token이 만료되었습니다."),
+    REFRESH_TOKEN_EXPIRED(UNAUTHORIZED, "Refresh Token이 만료되었습니다."),
     EMPTY_ACCESS_TOKEN(UNAUTHORIZED, "Access Token이 존재하지 않습니다"),
     EMPTY_REFRESH_TOKEN(UNAUTHORIZED, "Refresh Token이 Cookie에 저장되어 있지 않습니다."),
-    REFRESH_TOKEN_EXPIRED(UNAUTHORIZED, "Refresh Token이 만료되었습니다."),
+    REFRESH_TOKEN_NOT_FOUND(UNAUTHORIZED, "Refresh Token을 찾을 수 없습니다."),
     INVALID_SIGNATURE(UNAUTHORIZED, "JWT 서명이 유효하지 않습니다."),
     MALFORMED_TOKEN(UNAUTHORIZED, "손상되었거나 올바르지 않은 형식의 JWT입니다."),
     UNSUPPORTED_TOKEN(UNAUTHORIZED, "지원하지 않는 형식의 JWT입니다."),
