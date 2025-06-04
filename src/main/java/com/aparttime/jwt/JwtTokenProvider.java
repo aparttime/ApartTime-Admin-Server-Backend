@@ -1,7 +1,8 @@
 package com.aparttime.jwt;
 
 import com.aparttime.config.properties.JwtProperties;
-import com.aparttime.exception.jwt.AccessTokenExpiredException;
+import com.aparttime.exception.jwt.ExpiredAccessTokenException;
+import com.aparttime.exception.jwt.ExpiredRefreshTokenException;
 import com.aparttime.exception.jwt.InvalidSignatureException;
 import com.aparttime.exception.jwt.InvalidTokenException;
 import com.aparttime.exception.jwt.MalformedTokenException;
@@ -68,7 +69,7 @@ public class JwtTokenProvider {
             .compact();
     }
 
-    public boolean validateToken(String token) {
+    public boolean validateAccessToken(String token) {
         try {
             Jwts.parserBuilder()
                 .setSigningKey(key)
@@ -76,7 +77,26 @@ public class JwtTokenProvider {
                 .parseClaimsJws(token);
             return true;
         } catch (ExpiredJwtException e) {
-            throw new AccessTokenExpiredException();
+            throw new ExpiredAccessTokenException();
+        } catch (SignatureException e) {
+            throw new InvalidSignatureException();
+        } catch (MalformedJwtException e) {
+            throw new MalformedTokenException();
+        } catch (UnsupportedJwtException e) {
+            throw new UnsupportedTokenException();
+        } catch (JwtException | IllegalArgumentException e) {
+            throw new InvalidTokenException();
+        }
+    }
+
+    public void validateRefreshToken(String token) {
+        try {
+            Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token);
+        } catch (ExpiredJwtException e) {
+            throw new ExpiredRefreshTokenException();
         } catch (SignatureException e) {
             throw new InvalidSignatureException();
         } catch (MalformedJwtException e) {
