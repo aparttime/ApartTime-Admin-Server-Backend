@@ -39,29 +39,29 @@ public class JwtTokenProvider {
         this.key = Keys.hmacShaKeyFor(jwtProperties.getSecret().getBytes(StandardCharsets.UTF_8));
     }
 
-    public String createAccessToken(String username) {
+    public String createAccessToken(Long memberId) {
         return createToken(
-            username,
+            memberId,
             jwtProperties.getAccessTokenExpiration()
         );
     }
 
-    public String createRefreshToken(String username) {
+    public String createRefreshToken(Long memberId) {
         return createToken(
-            username,
+            memberId,
             jwtProperties.getRefreshTokenExpiration()
         );
     }
 
     private String createToken(
-        String username,
+        Long memberId,
         long expiration
     ) {
         Date now = new Date();
         Date expiry = new Date(now.getTime() + expiration);
 
         return Jwts.builder()
-            .setSubject(username)
+            .setSubject(String.valueOf(memberId))
             .setIssuedAt(now)
             .setExpiration(expiry)
             .signWith(key, SignatureAlgorithm.HS256)
@@ -88,7 +88,7 @@ public class JwtTokenProvider {
         }
     }
 
-    public String getUsername(String token) {
+    public String getMemberId(String token) {
         return Jwts.parserBuilder()
             .setSigningKey(key)
             .build()
@@ -98,9 +98,9 @@ public class JwtTokenProvider {
     }
 
     public Authentication getAuthentication(String token) {
-        String username = getUsername(token);
-        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+        String memberId = getMemberId(token);
+        UserDetails userDetails = userDetailsService.loadUserByUsername(memberId);
+        return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }
 
 }
