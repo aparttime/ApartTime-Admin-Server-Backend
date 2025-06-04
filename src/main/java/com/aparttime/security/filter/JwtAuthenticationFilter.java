@@ -43,6 +43,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     }
 
+    @Override
+    protected boolean shouldNotFilter(
+        HttpServletRequest request
+    ) throws ServletException {
+
+        String path = request.getRequestURI();
+
+        return "/api/auth/reissue".equals(path);
+
+    }
+
     private String resolveToken(
         HttpServletRequest request
     ) {
