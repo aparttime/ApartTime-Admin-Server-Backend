@@ -3,6 +3,7 @@ package com.aparttime.auth.cookie;
 import static com.aparttime.common.constants.CookieConstants.*;
 
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
 
@@ -34,6 +35,22 @@ public class AuthCookieManager {
         cookie.setMaxAge(REFRESH_TOKEN_COOKIE_INSTANT_EXPIRE);
 
         response.addCookie(cookie);
+    }
+
+    public String extractRefreshToken(
+        HttpServletRequest request
+    ) {
+        Cookie[] cookies = request.getCookies();
+
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (REFRESH_TOKEN_COOKIE_NAME.equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
+        }
+
+        return null;
     }
 
 }
