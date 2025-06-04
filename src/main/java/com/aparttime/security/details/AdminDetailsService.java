@@ -2,6 +2,7 @@ package com.aparttime.security.details;
 
 import com.aparttime.admin.domain.Admin;
 import com.aparttime.admin.repository.AdminRepository;
+import com.aparttime.exception.member.MemberNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -18,8 +19,11 @@ public class AdminDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(
         String username
     ) throws UsernameNotFoundException {
-        Admin admin = adminRepository.findByUsername(username)
-            .orElseThrow(() -> new UsernameNotFoundException("해당 관리자를 찾을 수 없습니다."));
+
+        Long memberId = Long.parseLong(username);
+
+        Admin admin = adminRepository.findById(memberId)
+            .orElseThrow(MemberNotFoundException::new);
 
         return new AdminDetails(admin);
     }
