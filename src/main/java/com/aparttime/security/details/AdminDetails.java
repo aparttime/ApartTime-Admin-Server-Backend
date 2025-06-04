@@ -50,4 +50,12 @@ public class AdminDetails implements UserDetails {
         return true;
     }
 
+    public Long getMemberId() {
+        return admin.getId();
+    }
+
+    public String getActualUsername() {
+        return admin.getUsername();
+    }
+
 }
