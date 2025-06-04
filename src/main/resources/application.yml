@@ -1,9 +1,7 @@
 spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5432/aparttime_test_db
-    username: root
-    password: 1234
-    driver-class-name: org.postgresql.Driver
+
+  profiles:
+    active: dev
 
   jpa:
     hibernate:
@@ -12,11 +10,3 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true
-
-  kafka:
-    bootstrap-servers: localhost:9092
-    consumer:
-      group-id: admin-dashboard-group
-      auto-offset-reset: latest
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
