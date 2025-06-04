@@ -2,7 +2,7 @@ package com.aparttime.security.filter;
 
 import static com.aparttime.common.constants.JwtTokenConstants.*;
 
-import com.aparttime.security.jwt.JwtTokenProvider;
+import com.aparttime.jwt.JwtTokenProvider;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -28,7 +28,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String token = resolveToken(request);
 
-        if (token != null && jwtTokenProvider.validateToken(token)) {
+        if (token != null && jwtTokenProvider.validateAccessToken(token)) {
             UsernamePasswordAuthenticationToken authentication =
                 (UsernamePasswordAuthenticationToken) jwtTokenProvider.getAuthentication(token);
 
