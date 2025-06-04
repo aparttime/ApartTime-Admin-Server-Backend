@@ -1,9 +1,11 @@
 package com.aparttime.security.config;
 
+import com.aparttime.jwt.JwtTokenProvider;
 import com.aparttime.security.filter.JwtAuthenticationFilter;
 import com.aparttime.security.filter.JwtExceptionFilter;
 import com.aparttime.security.handler.JwtAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -14,18 +16,21 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
+    private final JwtTokenProvider jwtTokenProvider;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    private final JwtExceptionFilter jwtExceptionFilter;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(
+        HttpSecurity http,
+        @Qualifier("handlerExceptionResolver") HandlerExceptionResolver resolver
+    ) throws Exception {
 
         http
             .csrf(AbstractHttpConfigurer::disable)
@@ -40,7 +45,8 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
                     "/api/auth/signup",
-                    "/api/auth/login"
+                    "/api/auth/login",
+                    "/api/auth/reissue"
                 ).permitAll()
                 .anyRequest().authenticated())
 
@@ -48,12 +54,12 @@ public class SecurityConfig {
                 .authenticationEntryPoint(jwtAuthenticationEntryPoint))
 
             .addFilterBefore(
-                jwtAuthenticationFilter,
+                new JwtAuthenticationFilter(jwtTokenProvider),
                 UsernamePasswordAuthenticationFilter.class
             )
 
             .addFilterBefore(
-                jwtExceptionFilter,
+                new JwtExceptionFilter(resolver),
                 JwtAuthenticationFilter.class
             );
 
