@@ -6,4 +6,16 @@ public record ReissueResponse(
     String accessToken
 ) {
 
+    public static ReissueResponse of(
+        Long memberId,
+        String username,
+        String accessToken
+    ) {
+        return new ReissueResponse(
+            memberId,
+            username,
+            accessToken
+        );
+    }
+
 }
