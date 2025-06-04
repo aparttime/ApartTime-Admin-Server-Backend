@@ -3,7 +3,7 @@ package com.aparttime.auth.controller;
 import static com.aparttime.common.response.ResponseMessage.*;
 
 import com.aparttime.auth.cookie.AuthCookieManager;
-import com.aparttime.auth.dto.LoginResult;
+import com.aparttime.auth.dto.result.LoginResult;
 import com.aparttime.auth.dto.request.LoginRequest;
 import com.aparttime.auth.dto.response.LoginResponse;
 import com.aparttime.auth.dto.response.ReissueResponse;
@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/auth")
-
 public class AuthController {
 
     private final AuthService authService;
@@ -53,11 +52,15 @@ public class AuthController {
     @PostMapping("/logout")
     public ResponseEntity<ApiResponse<Void>> logout(
         @AuthenticationPrincipal AdminDetails admin,
+        HttpServletRequest request,
         HttpServletResponse response
     ) {
-        authCookieManager.removeRefreshToken(response);
 
-        authService.logout(admin.getAdmin().getId());
+        String refreshToken = authCookieManager.extractRefreshToken(request);
+
+        authService.logout(admin.getMemberId(), refreshToken);
+
+        authCookieManager.removeRefreshToken(response);
 
         return ResponseEntity.ok(
             ApiResponse.ok(
