@@ -18,21 +18,29 @@ public class RefreshTokenRepository {
         String refreshToken,
         long expiration
     ) {
-        String key = REDIS_REFRESH_TOKEN_PREFIX + memberId;
+        String key = REDIS_REFRESH_TOKEN_PREFIX + refreshToken;
         Duration ttl = Duration.ofMillis(expiration);
-        stringRedisTemplate.opsForValue().set(key, refreshToken, ttl);
+        stringRedisTemplate.opsForValue().set(key, String.valueOf(memberId), ttl);
     }
 
-    public String get(
-        Long memberId
+    public Long findMemberIdByRefreshToken(
+        String refreshToken
     ) {
-        return stringRedisTemplate.opsForValue().get(REDIS_REFRESH_TOKEN_PREFIX + memberId);
+        String key = REDIS_REFRESH_TOKEN_PREFIX + refreshToken;
+        String memberId = stringRedisTemplate.opsForValue().get(key);
+
+        if (memberId == null) {
+            return null;
+        }
+
+        return Long.parseLong(memberId);
     }
 
-    public void delete(
-        Long memberId
+    public void deleteByRefreshToken(
+        String refreshToken
     ) {
-        stringRedisTemplate.delete(REDIS_REFRESH_TOKEN_PREFIX + memberId);
+        String key = REDIS_REFRESH_TOKEN_PREFIX + refreshToken;
+        stringRedisTemplate.delete(key);
     }
 
 }
