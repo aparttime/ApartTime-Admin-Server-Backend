@@ -1,0 +1,57 @@
+name: Deploy Spring Boot to EC2
+
+on:
+  push:
+    branches: [ "master" ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Build with Gradle
+        run: ./gradlew clean build
+
+      - name: Make deployment package
+        run: |
+          mkdir -p deploy
+          cp build/libs/*.jar deploy/app.jar
+          cp appspec.yml deploy/
+          cp -r scripts/ deploy/
+          chmod +x deploy/scripts/*.sh
+          cd deploy && zip -r deploy.zip .
+
+      - name: Upload to S3
+        uses: jakejarvis/s3-sync-action@master
+        with:
+          args: --acl private --follow-symlinks
+          source_dir: "deploy"
+          destination_dir: "deployments"
+        env:
+          AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Trigger CodeDeploy
+        uses: aws-actions/aws-codedeploy-deploy@v1
+        with:
+          application-name: ${{ secrets.CODEDEPLOY_APP_NAME }}
+          deployment-group: ${{ secrets.CODEDEPLOY_GROUP_NAME }}
+          deployment-config-name: CodeDeployDefault.AllAtOnce
+          deployment-revision:
+            bucket: ${{ secrets.AWS_S3_BUCKET }}
+            key: deployments/deploy.zip
+            bundleType: zip
+        env:
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
