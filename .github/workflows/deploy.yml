@@ -18,6 +18,9 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
       - name: Build with Gradle
         run: ./gradlew clean build
 
@@ -45,12 +48,14 @@ jobs:
         uses: aws-actions/aws-codedeploy-deploy@v1
         with:
           application-name: ${{ secrets.CODEDEPLOY_APP_NAME }}
-          deployment-group: ${{ secrets.CODEDEPLOY_GROUP_NAME }}
+          deployment-group-name: ${{ secrets.CODEDEPLOY_GROUP_NAME }}
           deployment-config-name: CodeDeployDefault.AllAtOnce
           deployment-revision:
-            bucket: ${{ secrets.AWS_S3_BUCKET }}
-            key: deployments/deploy.zip
-            bundleType: zip
+            revisionType: S3
+            s3Location:
+              bucket: ${{ secrets.AWS_S3_BUCKET }}
+              key: deployments/deploy.zip
+              bundleType: zip
         env:
           AWS_REGION: ${{ secrets.AWS_REGION }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
