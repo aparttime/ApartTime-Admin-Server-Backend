@@ -8,12 +8,11 @@ files:
 
 
 hooks:
-  ApplicationStop:
+  AfterInstall:
     - location: scripts/stop.sh
       timeout: 30
       runas: ec2-user
 
-  AfterInstall:
     - location: scripts/start.sh
       timeout: 60
       runas: ec2-user
