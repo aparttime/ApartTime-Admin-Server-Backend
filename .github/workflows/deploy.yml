@@ -31,7 +31,7 @@ jobs:
       - name: Make deployment package
         run: |
           mkdir -p deploy
-          cp build/libs/${{ env.JAR_NAME }} deploy/app.jar
+          cp build/libs/${{ env.JAR_NAME }} deploy/aparttime-admin.jar
           cp appspec.yml deploy/
           cp -r scripts/ deploy/
           chmod +x deploy/scripts/*.sh
@@ -46,7 +46,7 @@ jobs:
 
       - name: Upload to S3
         run: |
-          aws s3 cp deploy/deploy.zip s3://${{ secrets.AWS_S3_BUCKET }}/deployments/deploy.zip
+          aws s3 cp deploy/deploy.zip s3://${{ secrets.AWS_S3_BUCKET }}/deployments/backend/deploy.zip
 
       - name: Deploy to AWS CodeDeploy
         run: |
@@ -54,4 +54,4 @@ jobs:
             --application-name ${{ secrets.CODEDEPLOY_APP_NAME }} \
             --deployment-group-name ${{ secrets.CODEDEPLOY_GROUP_NAME }} \
             --deployment-config-name CodeDeployDefault.AllAtOnce \
-            --s3-location bucket=${{ secrets.AWS_S3_BUCKET }},key=deployments/deploy.zip,bundleType=zip
+            --s3-location bucket=${{ secrets.AWS_S3_BUCKET }},key=deployments/backend/deploy.zip,bundleType=zip
