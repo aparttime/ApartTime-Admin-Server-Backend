@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 PROJECT_ROOT="/home/ec2-user/app"
-JAR_FILE="$PROJECT_ROOT/app.jar"
+JAR_FILE="$PROJECT_ROOT/aparttime-admin.jar"
 
 APP_LOG="$PROJECT_ROOT/application.log"
 ERROR_LOG="$PROJECT_ROOT/error.log"
