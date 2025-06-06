@@ -2,8 +2,10 @@ version: 0.0
 os: linux
 
 files:
-  - source: app.jar
+  - source: aparttime-admin.jar
     destination: /home/ec2-user/app
+    overwrite: yes
+
 
 hooks:
   ApplicationStop:
