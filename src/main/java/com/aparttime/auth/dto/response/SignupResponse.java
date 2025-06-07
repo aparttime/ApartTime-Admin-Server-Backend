@@ -5,4 +5,14 @@ public record SignupResponse(
     String username
 ) {
 
+    public static SignupResponse of(
+        Long memberId,
+        String username
+    ) {
+        return new SignupResponse(
+            memberId,
+            username
+        );
+    }
+
 }
