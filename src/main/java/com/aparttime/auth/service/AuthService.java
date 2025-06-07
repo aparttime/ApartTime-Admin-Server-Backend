@@ -2,6 +2,7 @@ package com.aparttime.auth.service;
 
 import com.aparttime.admin.domain.Admin;
 import com.aparttime.auth.dto.response.ReissueResponse;
+import com.aparttime.auth.dto.response.SignupResponse;
 import com.aparttime.auth.dto.result.LoginResult;
 import com.aparttime.auth.dto.request.LoginRequest;
 import com.aparttime.auth.dto.request.SignupRequest;
@@ -9,6 +10,7 @@ import com.aparttime.admin.repository.AdminRepository;
 import com.aparttime.auth.dto.response.LoginResponse;
 import com.aparttime.auth.dto.result.ReissueResult;
 import com.aparttime.config.properties.JwtProperties;
+import com.aparttime.exception.auth.DuplicateUsernameException;
 import com.aparttime.exception.auth.InvalidPasswordException;
 import com.aparttime.exception.jwt.EmptyRefreshTokenException;
 import com.aparttime.exception.jwt.RefreshTokenNotFoundException;
@@ -29,15 +31,25 @@ public class AuthService {
     private final JwtProperties jwtProperties;
     private final RefreshTokenRepository refreshTokenRepository;
 
-    public void signup(
+    public SignupResponse signup(
         SignupRequest request
     ) {
+
+        if (adminRepository.findByUsername(request.username()).isPresent()) {
+            throw new DuplicateUsernameException();
+        }
+
         Admin admin = Admin.of(
-            request.getUsername(),
-            passwordEncoder.encode(request.getPassword())
+            request.username(),
+            passwordEncoder.encode(request.password())
         );
 
-        adminRepository.save(admin);
+        Admin savedAdmin = adminRepository.save(admin);
+
+        return SignupResponse.of(
+            savedAdmin.getId(),
+            savedAdmin.getUsername()
+        );
     }
 
     public LoginResult login(
