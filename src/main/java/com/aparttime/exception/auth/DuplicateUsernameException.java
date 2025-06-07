@@ -1,5 +1,12 @@
 package com.aparttime.exception.auth;
 
-public class DuplicateUsernameException {
+import static com.aparttime.exception.ErrorCode.*;
 
+import com.aparttime.exception.RestApiException;
+
+public class DuplicateUsernameException extends RestApiException {
+
+    public DuplicateUsernameException() {
+        super(DUPLICATE_USERNAME);
+    }
 }
