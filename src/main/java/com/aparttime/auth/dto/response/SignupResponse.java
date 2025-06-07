@@ -1,5 +1,8 @@
 package com.aparttime.auth.dto.response;
 
-public record SignupResponse() {
+public record SignupResponse(
+    Long memberId,
+    String username
+) {
 
 }
