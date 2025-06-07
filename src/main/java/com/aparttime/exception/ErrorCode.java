@@ -12,6 +12,7 @@ public enum ErrorCode {
 
     // auth
     INVALID_PASSWORD(BAD_REQUEST, "비밀번호가 일치하지 않습니다."),
+    DUPLICATE_USERNAME(BAD_REQUEST, "중복된 username입니다."),
 
     // member
     MEMBER_NOT_FOUND(BAD_REQUEST, "존재하지 않는 사용자입니다."),
