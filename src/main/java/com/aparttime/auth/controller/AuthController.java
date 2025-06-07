@@ -3,6 +3,8 @@ package com.aparttime.auth.controller;
 import static com.aparttime.common.response.ResponseMessage.*;
 
 import com.aparttime.auth.cookie.AuthCookieManager;
+import com.aparttime.auth.dto.request.SignupRequest;
+import com.aparttime.auth.dto.response.SignupResponse;
 import com.aparttime.auth.dto.result.LoginResult;
 import com.aparttime.auth.dto.request.LoginRequest;
 import com.aparttime.auth.dto.response.LoginResponse;
@@ -28,6 +30,20 @@ public class AuthController {
 
     private final AuthService authService;
     private final AuthCookieManager authCookieManager;
+
+    @PostMapping("/signup")
+    public ResponseEntity<ApiResponse<SignupResponse>> signup(
+        @RequestBody SignupRequest request
+    ) {
+        SignupResponse signupResponse = authService.signup(request);
+
+        return ResponseEntity.ok(
+            ApiResponse.ok(
+                SIGNUP_SUCCESS,
+                signupResponse
+            )
+        );
+    }
 
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<LoginResponse>> login(
