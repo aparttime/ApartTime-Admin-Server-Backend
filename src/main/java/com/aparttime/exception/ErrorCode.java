@@ -26,7 +26,8 @@ public enum ErrorCode {
     INVALID_SIGNATURE(UNAUTHORIZED, "JWT 서명이 유효하지 않습니다."),
     MALFORMED_TOKEN(UNAUTHORIZED, "손상되었거나 올바르지 않은 형식의 JWT입니다."),
     UNSUPPORTED_TOKEN(UNAUTHORIZED, "지원하지 않는 형식의 JWT입니다."),
-    INVALID_TOKEN(UNAUTHORIZED, "유효하지 않은 Token입니다.");
+    INVALID_TOKEN(UNAUTHORIZED, "유효하지 않은 Token입니다."),
+    INVALID_TOKEN_TYPE(UNAUTHORIZED, "Token의 타입이 올바르지 않습니다.");
 
     private final HttpStatus status;
     private final String message;
