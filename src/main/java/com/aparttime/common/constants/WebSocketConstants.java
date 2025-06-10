@@ -18,5 +18,10 @@ public final class WebSocketConstants {
     public static final int PAIR_SIZE = 2;
 
     // parameter key
-    public static final String SECONDARY_TOKEN_PARAMETER = "secondary_token";
+    public static final String PARAM_SECONDARY_TOKEN = "secondary_token";
+
+    public static final String SESSION_MEMBER_ID = "memberId";
+    public static final String WEB_SOCKET_PATH = "/ws";
+    public static final String SUB_PREFIX = "/sub";
+    public static final String PUB_PREFIX = "/pub";
 }
