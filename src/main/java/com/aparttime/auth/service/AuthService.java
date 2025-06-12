@@ -2,6 +2,7 @@ package com.aparttime.auth.service;
 
 import com.aparttime.admin.domain.Admin;
 import com.aparttime.auth.dto.response.ReissueResponse;
+import com.aparttime.auth.dto.response.SecondaryTokenResponse;
 import com.aparttime.auth.dto.response.SignupResponse;
 import com.aparttime.auth.dto.result.LoginResult;
 import com.aparttime.auth.dto.request.LoginRequest;
@@ -17,6 +18,7 @@ import com.aparttime.exception.jwt.RefreshTokenNotFoundException;
 import com.aparttime.exception.member.MemberNotFoundException;
 import com.aparttime.redis.repository.RefreshTokenRepository;
 import com.aparttime.jwt.JwtTokenProvider;
+import com.aparttime.redis.repository.SecondaryTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -30,6 +32,7 @@ public class AuthService {
     private final JwtTokenProvider jwtTokenProvider;
     private final JwtProperties jwtProperties;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final SecondaryTokenRepository secondaryTokenRepository;
 
     public SignupResponse signup(
         SignupRequest request
@@ -95,6 +98,8 @@ public class AuthService {
             refreshTokenRepository.deleteByRefreshToken(refreshToken);
         }
 
+        // TODO: memberId와 findMemberId가 같지 않을 경우의 예외 처리 필요
+
     }
 
     public ReissueResult reissue(
@@ -137,6 +142,23 @@ public class AuthService {
         );
 
         return ReissueResult.of(reissueResponse, newRefreshToken);
+    }
+
+    public SecondaryTokenResponse issueSecondaryToken(
+        Long memberId
+    ) {
+        String secondaryToken = jwtTokenProvider.createSecondaryToken(memberId);
+
+        secondaryTokenRepository.save(
+            memberId,
+            secondaryToken,
+            jwtProperties.getSecondaryTokenExpiration()
+        );
+
+        return SecondaryTokenResponse.of(
+            memberId,
+            secondaryToken
+        );
     }
 
 }
