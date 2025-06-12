@@ -24,6 +24,7 @@ export KAFKA_GROUP_ID=$(aws ssm get-parameter --name "/aparttime/prod/kafka-grou
 export JWT_SECRET=$(aws ssm get-parameter --name "/aparttime/prod/jwt-secret" --with-decryption --query "Parameter.Value" --output text)
 export JWT_ACCESS_TOKEN_EXPIRATION=$(aws ssm get-parameter --name "/aparttime/prod/jwt-access-token-expiration" --with-decryption --query "Parameter.Value" --output text)
 export JWT_REFRESH_TOKEN_EXPIRATION=$(aws ssm get-parameter --name "/aparttime/prod/jwt-refresh-token-expiration" --with-decryption --query "Parameter.Value" --output text)
+export JWT_SECONDARY_TOKEN_EXPIRATION=$(aws ssm get-parameter --name "/aparttime/prod/jwt-secondary-token-expiration" --with-decryption --query "Parameter.Value" --output text)
 
 
 # 기존에 실행 중인 앱이 있다면 종료
