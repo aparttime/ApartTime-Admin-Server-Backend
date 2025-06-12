@@ -9,4 +9,7 @@ public final class RedisConstants {
     // refresh token prefix
     public static final String REDIS_REFRESH_TOKEN_PREFIX = "refresh:";
 
+    // secondary token prefix
+    public static final String REDIS_SECONDARY_TOKEN_PREFIX = "secondary:";
+
 }

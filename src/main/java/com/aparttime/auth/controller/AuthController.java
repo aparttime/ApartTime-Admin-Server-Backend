@@ -3,6 +3,9 @@ package com.aparttime.auth.controller;
 import static com.aparttime.common.response.ResponseMessage.*;
 
 import com.aparttime.auth.cookie.AuthCookieManager;
+import com.aparttime.auth.dto.request.SignupRequest;
+import com.aparttime.auth.dto.response.SecondaryTokenResponse;
+import com.aparttime.auth.dto.response.SignupResponse;
 import com.aparttime.auth.dto.result.LoginResult;
 import com.aparttime.auth.dto.request.LoginRequest;
 import com.aparttime.auth.dto.response.LoginResponse;
@@ -28,6 +31,20 @@ public class AuthController {
 
     private final AuthService authService;
     private final AuthCookieManager authCookieManager;
+
+    @PostMapping("/signup")
+    public ResponseEntity<ApiResponse<SignupResponse>> signup(
+        @RequestBody SignupRequest request
+    ) {
+        SignupResponse signupResponse = authService.signup(request);
+
+        return ResponseEntity.ok(
+            ApiResponse.ok(
+                SIGNUP_SUCCESS,
+                signupResponse
+            )
+        );
+    }
 
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<LoginResponse>> login(
@@ -75,7 +92,6 @@ public class AuthController {
         HttpServletRequest request,
         HttpServletResponse response
     ) {
-
         String refreshToken = authCookieManager.extractRefreshToken(request);
 
         ReissueResult result = authService.reissue(refreshToken);
@@ -91,7 +107,19 @@ public class AuthController {
                 result.reissueResponse()
             )
         );
+    }
 
+    @PostMapping("/st")
+    public ResponseEntity<ApiResponse<SecondaryTokenResponse>> issueSecondaryToken(
+        @AuthenticationPrincipal AdminDetails admin
+    ) {
+        SecondaryTokenResponse response = authService.issueSecondaryToken(admin.getMemberId());
+
+        return ResponseEntity.ok(
+            ApiResponse.ok(
+                SECONDARY_TOKEN_ISSUE_SUCCESS,
+                response)
+        );
     }
 
 }
