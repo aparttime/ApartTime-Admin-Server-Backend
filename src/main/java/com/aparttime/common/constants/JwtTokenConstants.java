@@ -15,4 +15,9 @@ public final class JwtTokenConstants {
     // Bearer 문자열 길이
     public static final int BEARER_PREFIX_LENGTH = BEARER_PREFIX.length();
 
+    public static final String TOKEN_TYPE = "type";
+    public static final String ACCESS_TOKEN = "Access Token";
+    public static final String REFRESH_TOKEN = "Refresh Token";
+    public static final String SECONDARY_TOKEN = "Secondary Token";
+
 }

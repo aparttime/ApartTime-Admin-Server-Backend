@@ -23,4 +23,6 @@ public class GlobalExceptionHandler {
             .body(errorResponse);
     }
 
+    // TODO: catch-all handler 추가하기
+
 }
