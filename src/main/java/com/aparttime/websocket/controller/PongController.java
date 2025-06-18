@@ -1,5 +1,5 @@
 package com.aparttime.websocket.controller;
 
-public class PongMessageController {
+public class PongController {
 
 }
