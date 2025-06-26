@@ -1,5 +1,14 @@
 package com.aparttime.websocket.principal;
 
-public class StompPrincipal {
+import java.security.Principal;
+
+public record StompPrincipal(
+    Long memberId
+) implements Principal {
+
+    @Override
+    public String getName() {
+        return String.valueOf(memberId);
+    }
 
 }
