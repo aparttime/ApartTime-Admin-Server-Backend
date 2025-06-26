@@ -3,9 +3,7 @@ package com.aparttime.websocket.interceptor;
 import static com.aparttime.common.constants.WebSocketConstants.*;
 
 import com.aparttime.exception.jwt.EmptySecondaryTokenException;
-import com.aparttime.exception.jwt.InvalidTokenException;
 import com.aparttime.jwt.JwtTokenProvider;
-import com.aparttime.redis.repository.SecondaryTokenRepository;
 import java.net.URI;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +20,6 @@ import org.springframework.web.socket.server.HandshakeInterceptor;
 public class CustomHandshakeInterceptor implements HandshakeInterceptor {
 
     private final JwtTokenProvider jwtTokenProvider;
-    private final SecondaryTokenRepository secondaryTokenRepository;
 
     @Override
     public boolean beforeHandshake(
@@ -45,13 +42,6 @@ public class CustomHandshakeInterceptor implements HandshakeInterceptor {
 
         jwtTokenProvider.validateSecondaryToken(secondaryToken);
 
-        Long memberId = secondaryTokenRepository.findMemberIdBySecondaryToken(secondaryToken);
-
-        if (memberId == null) {
-            throw new InvalidTokenException();
-        }
-
-        attributes.put(SESSION_MEMBER_ID, memberId);
         return true;
     }
 
