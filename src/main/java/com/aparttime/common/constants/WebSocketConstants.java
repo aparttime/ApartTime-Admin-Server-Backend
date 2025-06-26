@@ -20,7 +20,12 @@ public final class WebSocketConstants {
     // parameter key
     public static final String PARAM_SECONDARY_TOKEN = "secondary_token";
 
-    public static final String SESSION_MEMBER_ID = "memberId";
+    // ping-pong
+    public static final String PING_DESTINATION = "/queue/ping";
+    public static final long PING_INTERVAL = 30000L;
+    public static final String PING = "PING";
+    public static final long PONG_CHECK_DELAY = 5000L;
+
     public static final String WEB_SOCKET_PATH = "/ws";
     public static final String TOPIC_PREFIX = "/topic";
     public static final String PUB_PREFIX = "/pub";
