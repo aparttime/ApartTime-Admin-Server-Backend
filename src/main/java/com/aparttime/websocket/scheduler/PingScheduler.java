@@ -1,4 +1,4 @@
-package com.aparttime.scheduler;
+package com.aparttime.websocket.scheduler;
 
 import static com.aparttime.common.constants.WebSocketConstants.*;
 
