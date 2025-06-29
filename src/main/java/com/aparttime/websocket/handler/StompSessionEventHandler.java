@@ -1,4 +1,4 @@
-package com.aparttime.websocket.listener;
+package com.aparttime.websocket.handler;
 
 import com.aparttime.websocket.principal.StompPrincipal;
 import com.aparttime.websocket.registry.WebSocketSessionRegistry;
