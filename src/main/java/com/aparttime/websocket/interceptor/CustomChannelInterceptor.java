@@ -1,5 +1,7 @@
 package com.aparttime.websocket.interceptor;
 
+import static com.aparttime.common.constants.JwtTokenConstants.*;
+
 import com.aparttime.jwt.JwtTokenProvider;
 import com.aparttime.websocket.principal.StompPrincipal;
 import io.jsonwebtoken.JwtException;
@@ -25,12 +27,10 @@ public class CustomChannelInterceptor implements ChannelInterceptor {
         StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
 
         if (accessor != null && StompCommand.CONNECT.equals(accessor.getCommand())) {
-            String authorization = accessor.getFirstNativeHeader("Authorization");
+            String authorization = accessor.getFirstNativeHeader(AUTHORIZATION_HEADER);
 
-            if (authorization != null && authorization.startsWith("Bearer ")) {
-                String accessToken = authorization.substring(7);
-
-                log.info(">>> CustomChannelInterceptor preSend() accessToken: {}", accessToken);
+            if (authorization != null && authorization.startsWith(BEARER_PREFIX)) {
+                String accessToken = authorization.substring(BEGIN_INDEX);
 
                 try {
                     jwtTokenProvider.validateAccessToken(accessToken);
