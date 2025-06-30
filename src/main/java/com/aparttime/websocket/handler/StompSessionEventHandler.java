@@ -1,14 +1,15 @@
 package com.aparttime.websocket.handler;
 
+import static com.aparttime.common.constants.WebSocketConstants.*;
+
 import com.aparttime.websocket.principal.StompPrincipal;
-import com.aparttime.websocket.registry.WebSocketSessionRegistry;
 import com.aparttime.websocket.service.WebSocketService;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Component;
-import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.messaging.SessionConnectEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
@@ -17,37 +18,41 @@ import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 @RequiredArgsConstructor
 public class StompSessionEventHandler {
 
-    private final WebSocketSessionRegistry sessionRegistry;
     private final WebSocketService webSocketService;
 
     @EventListener
     public void handleConnect(
         SessionConnectEvent event
     ) {
-        log.info(">>> WebSocketEventListener handleConnect()");
+        log.info(">>> STOMP Session Connected Event Received");
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(event.getMessage());
         StompPrincipal principal = (StompPrincipal) accessor.getUser();
 
         if (principal == null) {
-            log.warn("Unauthenticated user tried to connect via WebSocket!!!");
+            // TODO: 커스텀 예외 처리 필요
+            log.warn("Unauthenticated user STOMP session detected!!");
             return;
         }
 
         String memberId = principal.getName();
         String sessionId = accessor.getSessionId();
-        WebSocketSession session = (WebSocketSession) accessor.getHeader("simpSession");
 
-        if (session != null) {
-            long connectedAt = System.currentTimeMillis();
-            sessionRegistry.registerSession(sessionId, session);
-            session.getAttributes().put("connectedAt", connectedAt);
-            session.getAttributes().put("lastPongTime", connectedAt);
+        Map<String, Object> sessionAttributes = accessor.getSessionAttributes();
 
-            String ipAddress = (String) accessor.getSessionAttributes().get("ipAddress");
-            webSocketService.saveSessionInfo(memberId, sessionId, ipAddress, connectedAt);
+        String ipAddress = (String) sessionAttributes.get(IP_ADDRESS);
 
-            log.info("Client connected: memberId={}, sessionId={}", principal.getName(), sessionId);
-        }
+        long connectedAt = System.currentTimeMillis();
+        sessionAttributes.put(CONNECTED_AT, connectedAt);
+        sessionAttributes.put(LAST_PONG_TIME, connectedAt);
+
+        webSocketService.saveSessionInfo(
+            memberId,
+            sessionId,
+            ipAddress,
+            connectedAt
+        );
+
+        log.info("STOMP session processed for connection: memberId={}, sessionId={}", memberId, sessionId);
     }
 
     @EventListener
@@ -61,10 +66,13 @@ public class StompSessionEventHandler {
             return;
         }
 
-        sessionRegistry.removeSession(sessionId);
         webSocketService.deleteSessionInfo(sessionId);
 
-
+        if (accessor.getUser() != null) {
+            log.info("STOMP session disconnected and cleaned up: memberId={}, sessionId={}", accessor.getUser().getName(), sessionId);
+        } else {
+            log.info("STOMP session disconnected and cleaned up: sessionId={}", sessionId);
+        }
     }
 
 }
