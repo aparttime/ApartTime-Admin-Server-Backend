@@ -13,10 +13,9 @@ public final class RedisConstants {
     public static final String REDIS_SECONDARY_TOKEN_PREFIX = "secondary:";
 
     // session hash prefix
-    public static final String REDIS_SESSION_HASH_PREFIX = "ws:session:";
+    public static final String REDIS_SESSION_PREFIX = "ws:session:";
 
-    // member set prefix
-    public static final String REDIS_SERVERS_MEMBERS_PREFIX = "ws:server:";
-    public static final String REDIS_SERVERS_MEMBERS_SUFFIX = ":members";
+    // user sessions prefix
+    public static final String REDIS_USER_SESSIONS_PREFIX = "ws:user-sessions:";
 
 }
