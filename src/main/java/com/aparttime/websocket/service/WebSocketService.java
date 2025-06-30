@@ -1,8 +1,12 @@
 package com.aparttime.websocket.service;
 
+import static com.aparttime.common.constants.WebSocketConstants.*;
+
+import com.aparttime.common.constants.WebSocketConstants;
 import com.aparttime.config.properties.ServerProperties;
 import com.aparttime.websocket.dto.SessionInfo;
 import com.aparttime.websocket.repository.WebSocketRepository;
+import java.util.Map;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,69 +20,34 @@ public class WebSocketService {
     private final ServerProperties serverProperties;
     private final WebSocketRepository webSocketRepository;
 
-    public void handleSessionConnect(
+    public void saveSessionInfo(
         String memberId,
         String sessionId,
-        String ipAddress
+        String ipAddress,
+        long connectedAt
     ) {
-        long now = System.currentTimeMillis();
-
         SessionInfo sessionInfo = SessionInfo.of(
+            memberId,
             serverProperties.getId(),
             sessionId,
-            String.valueOf(now),
-            ipAddress,
-            String.valueOf(now)
+            String.valueOf(connectedAt),
+            ipAddress
         );
 
-        webSocketRepository.createSession(memberId, sessionInfo);
+        webSocketRepository.createSession(sessionInfo);
     }
 
     public void updateLastPongTime(
-        String memberId
+        Map<String, Object> sessionAttributes
     ) {
-        webSocketRepository.updateLastPongTime(
-            memberId,
-            System.currentTimeMillis()
-        );
+        sessionAttributes.put(LAST_PONG_TIME, System.currentTimeMillis());
     }
 
-    public void checkStaleSession(
-        String memberId,
-        String pongTimeBeforePing
+    public void deleteSessionInfo(
+        String sessionId
     ) {
-        SessionInfo currentSessionInfo = webSocketRepository.getSessionInfo(memberId);
-
-        if (currentSessionInfo == null) {
-            return;
-        }
-
-        String pongTimeAfterPing = currentSessionInfo.lastPongTime();
-
-        if (pongTimeBeforePing.equals(pongTimeAfterPing)) {
-            log.warn("PONG response timeout for member [{}]. Disconnecting stale session.", memberId);
-            logicalDisconnect(memberId);
-        } else {
-            log.info("PONG response received for member [{}]. Session is active.", memberId);
-        }
-    }
-
-    public Set<String> getMembersOnServer(
-        String serverId
-    ) {
-        return webSocketRepository.getMembersOnServer(serverId);
-    }
-
-    public SessionInfo getSessionInfo(
-        String memberId
-    ) {
-        return webSocketRepository.getSessionInfo(memberId);
-    }
-
-    public void logicalDisconnect(
-        String memberId
-    ) {
-        webSocketRepository.deleteSession(memberId);
+        log.info("Deleting session info from Redis for sessionId: [{}]", sessionId);
+        webSocketRepository.deleteSession(sessionId);
     }
 
 }
