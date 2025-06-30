@@ -33,8 +33,8 @@ public final class WebSocketConstants {
     public static final long PONG_TIMEOUT = 60000L;
 
     public static final String DIRECT_PREFIX = "/direct";
+    public static final String TOPIC_PREFIX = "/topic";
     public static final String PUB_PREFIX = "/pub";
     public static final String DIRECT_PING = "/direct/ping";
-    public static final String DIRECT_NOTIFICATIONS = "/direct/notifications";
     public static final String PING = "PING";
 }

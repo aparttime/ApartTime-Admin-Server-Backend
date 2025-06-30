@@ -38,7 +38,10 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         MessageBrokerRegistry registry
     ) {
         // 클라이언트에서 구독하는 경로 (서버 -> 클라이언트)
-        registry.enableSimpleBroker(DIRECT_PREFIX);
+        registry.enableSimpleBroker(
+            DIRECT_PREFIX,
+            TOPIC_PREFIX
+        );
 
         // 클라이언트가 메시지를 보낼 경로 (클라이언트 -> 서버)
         registry.setApplicationDestinationPrefixes(PUB_PREFIX);
