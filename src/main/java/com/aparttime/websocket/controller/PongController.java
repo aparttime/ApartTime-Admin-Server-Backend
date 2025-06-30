@@ -1,10 +1,11 @@
 package com.aparttime.websocket.controller;
 
-import com.aparttime.websocket.principal.StompPrincipal;
 import com.aparttime.websocket.service.WebSocketService;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.stereotype.Controller;
 
 @Slf4j
@@ -16,13 +17,10 @@ public class PongController {
 
     @MessageMapping("/pong")
     public void handlePong(
-        StompPrincipal principal
+        SimpMessageHeaderAccessor accessor
     ) {
-        String memberId = principal.getName();
-
-        log.info(">>> PongController memberId: {}", memberId);
-
-        webSocketService.updateLastPongTime(memberId);
+        Map<String, Object> sessionAttributes = accessor.getSessionAttributes();
+        webSocketService.updateLastPongTime(sessionAttributes);
     }
 
 }
