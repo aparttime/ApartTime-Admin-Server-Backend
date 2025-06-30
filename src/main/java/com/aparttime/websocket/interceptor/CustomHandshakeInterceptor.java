@@ -35,11 +35,17 @@ public class CustomHandshakeInterceptor implements HandshakeInterceptor {
         log.info(">>> CustomHandshakeInterceptor beforeHandshake() URI: {}", uri);
 
         String secondaryToken = extractSecondaryToken(query);
+        String ipAddress = request.getRemoteAddress().getAddress().getHostAddress();
+
+        log.info(">>> CustomHandshakeInterceptor beforeHandshake() ipAddress: {}", ipAddress);
+
+        attributes.put(IP_ADDRESS, ipAddress);
 
         if (secondaryToken == null || secondaryToken.isBlank()) {
             throw new EmptySecondaryTokenException();
         }
 
+        // TODO: 커스텀 예외 처리 추가 필요
         jwtTokenProvider.validateSecondaryToken(secondaryToken);
 
         return true;
