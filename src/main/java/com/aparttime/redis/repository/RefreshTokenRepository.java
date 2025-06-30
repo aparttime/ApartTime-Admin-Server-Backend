@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 @RequiredArgsConstructor
 public class RefreshTokenRepository {
 
-    private final StringRedisTemplate stringRedisTemplate;
+    private final StringRedisTemplate redisTemplate;
 
     public void save(
         Long memberId,
@@ -20,14 +20,14 @@ public class RefreshTokenRepository {
     ) {
         String key = REDIS_REFRESH_TOKEN_PREFIX + refreshToken;
         Duration ttl = Duration.ofMillis(expiration);
-        stringRedisTemplate.opsForValue().set(key, String.valueOf(memberId), ttl);
+        redisTemplate.opsForValue().set(key, String.valueOf(memberId), ttl);
     }
 
     public Long findMemberIdByRefreshToken(
         String refreshToken
     ) {
         String key = REDIS_REFRESH_TOKEN_PREFIX + refreshToken;
-        String memberId = stringRedisTemplate.opsForValue().get(key);
+        String memberId = redisTemplate.opsForValue().get(key);
 
         if (memberId == null) {
             return null;
@@ -40,7 +40,7 @@ public class RefreshTokenRepository {
         String refreshToken
     ) {
         String key = REDIS_REFRESH_TOKEN_PREFIX + refreshToken;
-        stringRedisTemplate.delete(key);
+        redisTemplate.delete(key);
     }
 
 }
