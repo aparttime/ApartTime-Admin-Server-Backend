@@ -3,9 +3,7 @@ package com.aparttime.websocket.interceptor;
 import static com.aparttime.common.constants.WebSocketConstants.*;
 
 import com.aparttime.exception.jwt.EmptySecondaryTokenException;
-import com.aparttime.exception.jwt.InvalidTokenException;
 import com.aparttime.jwt.JwtTokenProvider;
-import com.aparttime.redis.repository.SecondaryTokenRepository;
 import java.net.URI;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +20,6 @@ import org.springframework.web.socket.server.HandshakeInterceptor;
 public class CustomHandshakeInterceptor implements HandshakeInterceptor {
 
     private final JwtTokenProvider jwtTokenProvider;
-    private final SecondaryTokenRepository secondaryTokenRepository;
 
     @Override
     public boolean beforeHandshake(
@@ -38,20 +35,19 @@ public class CustomHandshakeInterceptor implements HandshakeInterceptor {
         log.info(">>> CustomHandshakeInterceptor beforeHandshake() URI: {}", uri);
 
         String secondaryToken = extractSecondaryToken(query);
+        String ipAddress = request.getRemoteAddress().getAddress().getHostAddress();
+
+        log.info(">>> CustomHandshakeInterceptor beforeHandshake() ipAddress: {}", ipAddress);
+
+        attributes.put(IP_ADDRESS, ipAddress);
 
         if (secondaryToken == null || secondaryToken.isBlank()) {
             throw new EmptySecondaryTokenException();
         }
 
+        // TODO: 커스텀 예외 처리 추가 필요
         jwtTokenProvider.validateSecondaryToken(secondaryToken);
 
-        Long memberId = secondaryTokenRepository.findMemberIdBySecondaryToken(secondaryToken);
-
-        if (memberId == null) {
-            throw new InvalidTokenException();
-        }
-
-        attributes.put(SESSION_MEMBER_ID, memberId);
         return true;
     }
 

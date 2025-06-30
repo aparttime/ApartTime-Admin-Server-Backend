@@ -6,6 +6,8 @@ public final class WebSocketConstants {
         throw new UnsupportedOperationException("상수 클래스는 인스턴스화 할 수 없습니다.");
     }
 
+    public static final String WEB_SOCKET_PATH = "/ws";
+
     // division
     public static final String QUERY_SEPARATOR = "&";
     public static final String KEY_VALUE_SEPARATOR = "=";
@@ -20,8 +22,19 @@ public final class WebSocketConstants {
     // parameter key
     public static final String PARAM_SECONDARY_TOKEN = "secondary_token";
 
-    public static final String SESSION_MEMBER_ID = "memberId";
-    public static final String WEB_SOCKET_PATH = "/ws";
-    public static final String TOPIC_PREFIX = "/topic";
+    // session attributes
+    public static final String IP_ADDRESS = "ipAddress";
+    public static final String CONNECTED_AT = "connectedAt";
+    public static final String LAST_PONG_TIME = "lastPongTime";
+
+    // ping-pong
+    public static final long PING_INTERVAL = 25000L;
+    public static final long WATCHDOG_INTERVAL = 10000L;
+    public static final long PONG_TIMEOUT = 60000L;
+
+    public static final String DIRECT_PREFIX = "/direct";
     public static final String PUB_PREFIX = "/pub";
+    public static final String DIRECT_PING = "/direct/ping";
+    public static final String DIRECT_NOTIFICATIONS = "/direct/notifications";
+    public static final String PING = "PING";
 }

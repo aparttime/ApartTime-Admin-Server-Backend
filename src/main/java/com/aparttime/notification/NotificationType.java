@@ -13,7 +13,7 @@ public enum NotificationType {
         "신규 회원가입",
         "신규 회원가입 요청 - ",
         "/members/signup/pending",
-        BASE_TOPIC + "/signup"
+        "/queue/notifications/signup"
     );
 
 

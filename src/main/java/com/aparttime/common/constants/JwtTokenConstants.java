@@ -11,6 +11,7 @@ public final class JwtTokenConstants {
 
     // Bearer prefix
     public static final String BEARER_PREFIX = "Bearer ";
+    public static final int BEGIN_INDEX = 7;
 
     // Bearer 문자열 길이
     public static final int BEARER_PREFIX_LENGTH = BEARER_PREFIX.length();
