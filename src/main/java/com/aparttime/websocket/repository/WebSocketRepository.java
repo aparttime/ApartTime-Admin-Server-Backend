@@ -6,7 +6,6 @@ import com.aparttime.config.properties.ServerProperties;
 import com.aparttime.websocket.dto.SessionInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Map;
-import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
@@ -19,77 +18,61 @@ public class WebSocketRepository {
     private final ServerProperties serverProperties;
     private final ObjectMapper objectMapper;
 
-    private String getSessionKey(
-        String memberId
+    private String getSessionDetailKey(
+        String sessionId
     ) {
-        return REDIS_SESSION_HASH_PREFIX + memberId;
+        return REDIS_SESSION_PREFIX + sessionId;
     }
 
-    private String getServerMembersKey(
-        String serverId
+    private String getUserSessionsKey(
+        String memberId
     ) {
-        return REDIS_SERVERS_MEMBERS_PREFIX + serverId + REDIS_SERVERS_MEMBERS_SUFFIX;
+        return REDIS_USER_SESSIONS_PREFIX + memberId;
     }
 
     public void createSession(
-        String memberId,
         SessionInfo sessionInfo
     ) {
-        String serverId = serverProperties.getId();
-        String sessionKey = getSessionKey(memberId);
-        String serverMembersKey = getServerMembersKey(serverId);
+        String sessionId = sessionInfo.sessionId();
+        String memberId = sessionInfo.memberId();
 
-        Map<String, String> sessionData = objectMapper.convertValue(
+        String sessionDetailKey = getSessionDetailKey(sessionId);
+        String userSessionsKey = getUserSessionsKey(memberId);
+
+        Map<String, String> sessionInfoMap = objectMapper.convertValue(
             sessionInfo,
             Map.class
         );
 
-        redisTemplate.opsForHash().putAll(sessionKey, sessionData);
-        redisTemplate.opsForSet().add(serverMembersKey, memberId);
-    }
-
-    public void updateLastPongTime(
-        String memberId,
-        long timestamp
-    ) {
-        String sessionKey = getSessionKey(memberId);
-
-        redisTemplate.opsForHash().put(
-            sessionKey,
-            "lastPongTime",
-            String.valueOf(timestamp)
-        );
-    }
-
-    public Set<String> getMembersOnServer(
-        String serverId
-    ) {
-        String serverMembersKey = getServerMembersKey(serverId);
-        return redisTemplate.opsForSet().members(serverMembersKey);
+        redisTemplate.opsForHash().putAll(sessionDetailKey, sessionInfoMap);
+        redisTemplate.opsForSet().add(userSessionsKey, sessionId);
     }
 
     public SessionInfo getSessionInfo(
-        String memberId
+        String sessionId
     ) {
-        String sessionKey = getSessionKey(memberId);
-        Map<Object, Object> sessionData = redisTemplate.opsForHash().entries(sessionKey);
-        if (sessionData.isEmpty()) {
+        String sessionDetailKey = getSessionDetailKey(sessionId);
+        Map<Object, Object> sessionInfo = redisTemplate.opsForHash().entries(sessionDetailKey);
+        if (sessionInfo.isEmpty()) {
             return null;
         }
-        return objectMapper.convertValue(sessionData, SessionInfo.class);
+        return objectMapper.convertValue(sessionInfo, SessionInfo.class);
     }
 
     public void deleteSession(
-        String memberId
+        String sessionId
     ) {
-        SessionInfo sessionInfo = getSessionInfo(memberId);
-        if (sessionInfo != null) {
-            String serverId = sessionInfo.serverId();
-            String serverMembersKey = getServerMembersKey(serverId);
-            redisTemplate.opsForSet().remove(serverMembersKey, memberId);
+        SessionInfo sessionInfo = getSessionInfo(sessionId);
+        if (sessionInfo == null) {
+            return;
         }
-        String sessionKey = getSessionKey(memberId);
-        redisTemplate.delete(sessionKey);
+
+        String memberId = sessionInfo.memberId();
+        String userSessionsKey = getUserSessionsKey(memberId);
+        String sessionDetailKey = getSessionDetailKey(sessionId);
+
+        redisTemplate.opsForSet().remove(userSessionsKey, sessionId);
+        redisTemplate.delete(sessionDetailKey);
     }
 
 }
