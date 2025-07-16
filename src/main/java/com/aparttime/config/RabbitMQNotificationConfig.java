@@ -72,7 +72,7 @@ public class RabbitMQNotificationConfig {
         container.setMessageListener(message -> {
             try {
                 String body = new String(message.getBody());
-                log.info("[RabbitMQNotificationListener] Received raw message: {}", body);
+                log.info("[RabbitMQNotificationListener] Received message body: {}", body);
 
                 Map<String, Object> payload = objectMapper.readValue(
                     body,
