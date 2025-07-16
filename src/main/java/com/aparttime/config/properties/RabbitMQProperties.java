@@ -1,4 +1,11 @@
 package com.aparttime.config.properties;
 
-public record RabbitMQProperties() {
+import org.springframework.boot.context.properties.ConfigurationProperties;
+
+@ConfigurationProperties(prefix = "app.rabbitmq")
+public record RabbitMQProperties(
+    String exchangeName,
+    String queueName
+) {
+
 }
