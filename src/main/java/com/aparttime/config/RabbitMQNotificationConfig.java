@@ -74,6 +74,7 @@ public class RabbitMQNotificationConfig {
                 String body = new String(message.getBody());
                 log.info("[RabbitMQNotificationListener] Received message body: {}", body);
 
+                // TODO: 추후 DTO 도입
                 Map<String, Object> payload = objectMapper.readValue(
                     body,
                     new TypeReference<>() {
