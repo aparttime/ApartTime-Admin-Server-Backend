@@ -2,8 +2,13 @@ package com.aparttime.config;
 
 import com.aparttime.config.properties.RabbitMQProperties;
 import com.aparttime.notification.NotificationService;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.core.Binding;
+import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.FanoutExchange;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
@@ -11,6 +16,7 @@ import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+@Slf4j
 @Configuration
 @RequiredArgsConstructor
 public class RabbitMQNotificationConfig {
@@ -62,9 +68,27 @@ public class RabbitMQNotificationConfig {
         SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
         container.setConnectionFactory(connectionFactory);
         container.setQueues(notificationQueue);
-        container.setConcurrentConsumers(1);
 
-        container.
+        container.setMessageListener(message -> {
+            try {
+                String body = new String(message.getBody());
+                log.info("[RabbitMQNotificationListener] Received raw message: {}", body);
+
+                Map<String, Object> payload = objectMapper.readValue(
+                    body,
+                    new TypeReference<>() {
+                    }
+                );
+
+                notificationService.handlePayload(payload);
+            } catch (Exception e) {
+                // TODO: 예외 처리 필요
+                log.error("[RabbitMQNotificationListener] Failed to process message", e);
+                throw new RuntimeException("Failed to process RabbitMQ message", e);
+            }
+        });
+
+        return container;
     }
 
 }
