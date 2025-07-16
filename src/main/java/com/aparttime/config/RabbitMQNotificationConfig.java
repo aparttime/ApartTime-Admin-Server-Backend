@@ -43,6 +43,16 @@ public class RabbitMQNotificationConfig {
     }
 
     @Bean
+    public Binding notificationBinding(
+        FanoutExchange notificationExchange,
+        Queue notificationQueue
+    ) {
+        return BindingBuilder
+            .bind(notificationQueue)
+            .to(notificationExchange);
+    }
+
+    @Bean
     public SimpleMessageListenerContainer messageListenerContainer(
         ConnectionFactory connectionFactory,
         Queue notificationQueue,
